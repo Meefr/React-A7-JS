@@ -1,4 +1,5 @@
-var products = null;
+var products = JSON.parse(localStorage.getItem("products"));
+
 var productsContainer = document.getElementById("product-tabel-container");
 var warningMessage = document.getElementById("warning-msg");
 var tabelBody = document.getElementById("tabel-body");
@@ -77,7 +78,7 @@ productForm.onsubmit = function (event) {
     }
     products.push(product);
   }
-
+  localStorage.setItem("products",JSON.stringify(products));
   handelREnderData();
   productForm.reset();
 };
@@ -110,3 +111,80 @@ function deleteData(id) {
     }
   });
 }
+
+var searchInput = document.getElementById("search-input");
+var tableBody = document.getElementById("tabel-body")
+searchInput.onkeyup = () => {
+  var value = searchInput.value;
+  var row = document.createElement("tr");
+  for (var i = 0; i < products.length; i++) {
+    if (products[i].name.includes(value)) {
+      // Highlight the matched text
+      const regex = new RegExp(`(${value})`, 'gi');
+      const highlightedName = products[i].name.replace(regex, '<span class="highlight">$1</span>');
+      
+      var cellIndex = document.createElement("th");
+    cellIndex.textContent = i + 1;
+    row.appendChild(cellIndex);
+
+    var cellName = document.createElement("td");
+    cellName.textContent = products[i].name;
+    row.appendChild(cellName);
+
+    var cellCat = document.createElement("td");
+    cellCat.textContent = products[i].cat;
+    row.appendChild(cellCat);
+
+    var cellPrice = document.createElement("td");
+    cellPrice.textContent = products[i].price;
+    row.appendChild(cellPrice);
+
+    var cellDesc = document.createElement("td");
+    cellDesc.textContent = products[i].dec;
+    row.appendChild(cellDesc);
+    var cellEdit = document.createElement("td");
+    var editButton = document.createElement("button");
+    editButton.className = "btn btn-outline-success";
+    editButton.onclick = () => updateProduct(i);
+    editButton.innerHTML = '<i class="fa-solid fa-pen-to-square"></i>';
+    cellEdit.appendChild(editButton);
+    row.appendChild(cellEdit);
+
+    var cellDelete = document.createElement("td");
+    var deleteButton = document.createElement("button");
+    deleteButton.className = "btn btn-outline-danger";
+    deleteButton.onclick = () => deleteProduct(i);
+    deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
+    cellDelete.appendChild(deleteButton);
+    row.appendChild(cellDelete);
+
+    //   row += `<tr>
+    //     <th>${i + 1}</th>
+    //     <td>${highlightedName}</td>
+    //     <td>${products[i].cat}</td>
+    //     <td>${products[i].price}</td>
+    //     <td>${products[i].dec}</td>
+    //     <td>
+    //       <button class="btn btn-outline-success" onclick="updateProduct(${i})">
+    //         <i class="fa-solid fa-pen-to-square"></i>
+    //       </button>
+    //     </td>
+    //     <td>
+    //       <button class="btn btn-outline-danger" onclick="deleteProduct(${i})">
+    //         <i class="fa-solid fa-trash"></i>
+    //       </button>
+    //     </td>
+    //   </tr>`;
+    // }
+  }
+}
+if(row){
+  console.log(row)
+  tableBody.innerHTML = row;
+}
+else{
+  alert("No Results");
+  handelRenderData();
+  searchInput.value = "";
+}
+};
